@@ -387,7 +387,7 @@
             <div class="service-card" onclick="openModal('custom')">
                 <span class="service-icon">🌐</span>
                 <h3>接案做任何網站<br>Custom Websites</h3>
-                <p>專業客製化開發，從設計到上線一站式服務。</p>
+                <p style="color: var(--primary); font-weight: 800;">NT$ 2,000 起</p>
             </div>
             <!-- Card 2 -->
             <div class="service-card" onclick="openModal('env')">
@@ -417,8 +417,8 @@
                 </div>
                 <div class="founder-info">
                     <h2>創辦人介紹</h2>
-                    <p>致力於用科技簡化生活，幫助超過 100 位學員建立自己的數位事業。我們的願景是讓每個人都能擁有透過軟體創造價值的權利。</p>
-                    <div class="title-badge">Visionary & Developer</div>
+                    <p>我是台大專業的工程師，目前就讀於 **台大創新設計學院 (D-School) 大四**。曾多次參加 **U-Start 創新創業競賽** 並具備豐富實戰經驗。我深感軟體不只是程式碼，更是一種解決問題的思維，因此我比一般工程師更懂得如何從商業角度出發，精準對接顧客需求。</p>
+                    <div class="title-badge">NTU Developer & U-Start Winner</div>
                 </div>
             </div>
         </section>
@@ -450,10 +450,21 @@
             </div>
             <div class="modal-info">
                 <h2 id="modalTitle">服務名稱</h2>
-                <p id="modalDesc">詳細服務說明與介紹...</p>
-                <div style="margin-bottom: 2rem;">
-                    <span style="font-size: 2rem; font-weight: 800; color: var(--primary);">NT$ 9,999</span>
-                    <span style="color: var(--text-muted); text-decoration: line-through; margin-left: 10px;">NT$ 15,000</span>
+                <div id="modalDescriptionWrapper">
+                    <p id="modalDesc">詳細服務說明與介紹...</p>
+                </div>
+                <div id="priceSection" style="margin-bottom: 2rem;">
+                    <div id="priceSelector" style="display: none; margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">選擇方案：</label>
+                        <select id="serviceType" style="width: 100%; padding: 0.8rem; border-radius: 12px; background: #222; color: white; border: 1px solid var(--card-border);">
+                            <option value="2000">NT$ 2,000 一頁式精簡網站</option>
+                            <option value="5000">NT$ 5,000 全功能電商網站</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 10px;">
+                        <span id="displayPrice" style="font-size: 2.5rem; font-weight: 800; color: var(--primary);">NT$ 2,000</span>
+                        <span id="originalPrice" style="color: var(--text-muted); text-decoration: line-through; display: none;">NT$ 4,000</span>
+                    </div>
                 </div>
                 <a href="javascript:void(0)" class="buy-btn" id="buyBtn">立即購買領取</a>
             </div>
@@ -520,11 +531,32 @@
                 <div class="modal-dot ${i === 0 ? 'active' : ''}"></div>
             `).join('');
             
+            // Conditional Pricing UI
+            const isUnavailable = product.desc.includes('暫時無上架');
+            document.getElementById('priceSection').style.display = isUnavailable ? 'none' : 'block';
+            document.getElementById('buyBtn').style.display = isUnavailable ? 'none' : 'block';
+            
+            // Web Development specific selector
+            const priceSelector = document.getElementById('priceSelector');
+            const displayPrice = document.getElementById('displayPrice');
+            if (id === 'custom') {
+                priceSelector.style.display = 'block';
+                displayPrice.innerText = 'NT$ 2,000';
+            } else {
+                priceSelector.style.display = 'none';
+                displayPrice.innerText = 'NT$ 9,999'; // Default or from object
+            }
+
             updateSlide();
             document.getElementById('modalTitle').innerText = product.title;
             document.getElementById('modalDesc').innerText = product.desc;
             document.getElementById('productModal').style.display = 'flex';
         }
+
+        // Handle price selector change
+        document.getElementById('serviceType').onchange = function(e) {
+            document.getElementById('displayPrice').innerText = 'NT$ ' + parseInt(e.target.value).toLocaleString();
+        };
 
         function closeModal() {
             document.getElementById('productModal').style.display = 'none';
