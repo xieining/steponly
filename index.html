@@ -6,7 +6,7 @@
     <title>StepOnly | 頂尖軟體服務販售</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #00f5a0;
@@ -24,7 +24,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
         }
 
         body {
@@ -77,21 +77,28 @@
         /* Service Grid */
         .service-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2.5rem;
+            max-width: 900px;
+            margin: 0 auto;
             padding: 60px 0;
         }
 
         .service-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 32px;
+            border-radius: 40px;
             padding: 3rem 2rem;
             text-align: center;
             transition: all 0.4s cubic-bezier(0.2, 0, 0.2, 1);
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            aspect-ratio: 3/4;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .service-card::after {
