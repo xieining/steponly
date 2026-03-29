@@ -434,6 +434,14 @@
                 </form>
             </div>
         </section>
+
+        <!-- Hidden NewebPay Form -->
+        <form id="newebpay-form" method="post" action="https://ccore.newebpay.com/MPG/mpg_gateway" style="display: none;">
+            <input type="hidden" name="MerchantID" value="">
+            <input type="hidden" name="TradeInfo" value="">
+            <input type="hidden" name="TradeSha" value="">
+            <input type="hidden" name="Version" value="2.0">
+        </form>
     </main>
 
     <!-- Project Modal -->
@@ -474,10 +482,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // --- Supabase Configuration ---
-        const SUPABASE_URL = 'https://gfwafsljbgkrslgrmoar.supabase.co'; // 替換為您的專案 URL
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdmd2Fmc2xqYmdrcnNsZ3Jtb2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTAwNzQsImV4cCI6MjA4OTkyNjA3NH0.6KN1kc7otRtIQs6MGbu6E4yb2Dcfyz7E55qikJj1Zlo'; // 替換為您的 Anon Key
+        const SUPABASE_URL = 'https://gfwafsljbgkrslgrmoar.supabase.co'; // 建議更換為您的新 StepOnly 專案 URL
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdmd2Fmc2xqYmdrcnNsZ3Jtb2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzNTAwNzQsImV4cCI6MjA4OTkyNjA3NH0.6KN1kc7otRtIQs6MGbu6E4yb2Dcfyz7E55qikJj1Zlo'; 
         const { createClient } = supabase;
         const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- NewebPay Configuration (請於 Zeabur 設為環境變數或直接在此更換) ---
+        const NEWEBPAY_MERCHANT_ID = ''; 
+        // 注意：TradeInfo 與 TradeSha 需要在後端生成以確保安全。
+        // 這裡將預留一個呼叫後端 API 的邏輯。
 
         const products = {
             custom: {
@@ -597,12 +610,30 @@
         }
 
         // --- NewebPay Purchase Flow ---
-        document.getElementById('buyBtn').onclick = function() {
+        document.getElementById('buyBtn').onclick = async function() {
             const title = document.getElementById('modalTitle').innerText;
-            // 這裡模擬串接藍新金流的邏輯
-            if (confirm(`確認購買「${title}」？內容包含詳細說明與資源包。`)) {
-                alert('正在引導至藍新安全支付頁面...');
-                // 這裡會放置隱藏 form submit 到 NewebPay URL 的邏輯
+            const price = document.getElementById('displayPrice').innerText;
+            const plan = document.getElementById('serviceType')?.value || 'custom';
+
+            if (confirm(`確認購買「${title}」(${price})？`)) {
+                // 1. 紀錄到 Supabase 作為一個未付款訂單 (可選)
+                const email = prompt('請輸入您的 Email 以便接收服務資訊：');
+                if (!email) return;
+
+                try {
+                    // 這裡模擬呼叫您的後端 API (例如 Next.js app) 來取得藍新加密參數
+                    alert('正在與金流系統連線，請稍候...');
+                    
+                    // 下面是假設您有一個後端 API 處理加密：
+                    // const response = await fetch('/api/payment/create', { method: 'POST', body: JSON.stringify({ email, plan, price }) });
+                    // const params = await response.json();
+                    
+                    // 導向藍新 (目前僅為預留位置)
+                    console.log('準備提交至藍新:', { email, plan, price });
+                    // window.location.href = `https://ccore.newebpay.com/MPG/mpg_gateway?...`;
+                } catch (err) {
+                    alert('金流初始化失敗，請稍後再試。');
+                }
             }
         }
 
@@ -618,8 +649,8 @@
 
             try {
                 const { error } = await supabaseClient
-                    .from('subscribers') // 請確保您的 Supabase 有這個 Table 或改為 fancher
-                    .insert([{ email }]);
+                    .from('steponly_leads') // 更新為 steponly_leads
+                    .insert([{ email, plan: 'newsletter' }]);
                 
                 if (error) throw error;
                 btn.innerText = '訂閱成功！';
